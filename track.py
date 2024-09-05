@@ -27,7 +27,7 @@ class track:
         
         self.album_name = spotify_track['track']['album']['name']
         self.album_release_date = spotify_track['track']['album']['release_date']
-        self.album_image = spotify_track['track']['album']['images'][0]
+        self.album_image = spotify_track['track']['album']['images'][0]['url']
 
         self.disc_number = spotify_track['track']['disc_number']
         self.track_number = spotify_track['track']['track_number']
@@ -61,7 +61,7 @@ class track:
         
         self.album_name = spotify_track['album']['name']
         self.album_release_date = spotify_track['album']['release_date']
-        self.album_image = spotify_track['album']['images'][0]
+        self.album_image = spotify_track['album']['images'][0]['url']
 
         self.disc_number = spotify_track['disc_number']
         self.track_number = spotify_track['track_number']

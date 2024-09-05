@@ -1,4 +1,7 @@
 .env
 venv/
-.cache
 spotify_types.py
+
+.cache
+__pycache__/
+__pycache__/track.cpython-311.pyc

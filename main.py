@@ -2,6 +2,7 @@
 import os
 from dotenv import load_dotenv, dotenv_values
 import copy
+import pickle
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -36,33 +37,33 @@ sp2 = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_secret=SPOTIFY_CLIENT_SECRET,
 ))
 
-# Actual code =================================================================
+# Get music information from spotify ==========================================
 
 # Get user
 user = sp.me()
 
 # Get all saved tracks
-# saved_tracks = []
+saved_tracks = []
 
-# iteration = 0
-# browse_all_saved_tracks = False
-# while not browse_all_saved_tracks:
+iteration = 0
+browse_all_saved_tracks = False
+while not browse_all_saved_tracks:
 
-#     offset = iteration*20
-#     results=sp.current_user_saved_tracks(offset=offset)
+    offset = iteration*20
+    results=sp.current_user_saved_tracks(offset=offset)
 
-#     for idx, item in enumerate(results['items']):
+    for idx, item in enumerate(results['items']):
 
-#         my_track = track.track()
-#         my_track.init_from_playlist(item)
-#         my_track.display()
+        my_track = track.track()
+        my_track.init_from_playlist(item)
+        my_track.display()
 
-#         saved_tracks.append(my_track)
+        saved_tracks.append(my_track)
         
 
-#     iteration += 1
-#     if len(results['items']) < 20 :
-#         browse_all_saved_tracks = True
+    iteration += 1
+    if len(results['items']) < 20 :
+        browse_all_saved_tracks = True
 
 # Get all tracks from saved albums
 saved_album_tracks = []
@@ -99,3 +100,13 @@ for i in range(0, len(spotify_ids), 50) :
         my_track.display()
 
         saved_album_tracks.append(my_track)
+
+# Get all tracks from playlists
+
+# Organize Library ============================================================
+
+# Make sure albums are created
+
+# Store all information in pickle =============================================
+
+# Download musics that are not already downloaded =============================
