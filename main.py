@@ -36,33 +36,66 @@ sp2 = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_secret=SPOTIFY_CLIENT_SECRET,
 ))
 
-
 # Actual code =================================================================
 
 # Get user
 user = sp.me()
 
 # Get all saved tracks
+# saved_tracks = []
 
-saved_tracks = []
+# iteration = 0
+# browse_all_saved_tracks = False
+# while not browse_all_saved_tracks:
+
+#     offset = iteration*20
+#     results=sp.current_user_saved_tracks(offset=offset)
+
+#     for idx, item in enumerate(results['items']):
+
+#         my_track = track.track()
+#         my_track.init_from_playlist(item)
+#         my_track.display()
+
+#         saved_tracks.append(my_track)
+        
+
+#     iteration += 1
+#     if len(results['items']) < 20 :
+#         browse_all_saved_tracks = True
+
+# Get all tracks from saved albums
+saved_album_tracks = []
+spotify_ids = []
 
 iteration = 0
-browse_all_saved_tracks = False
-while not browse_all_saved_tracks:
+browse_all_saved_albums = False
+while not browse_all_saved_albums:
 
     offset = iteration*20
-    results=sp.current_user_saved_tracks(offset=offset)
+    results = sp.current_user_saved_albums(offset=offset)
 
+    # loop over albums
+    for idx, item in enumerate(results['items']) :
 
-
-    for idx, item in enumerate(results['items']):
-
-        my_track = track.track(item)
-        my_track.display()
-
-        saved_tracks.append(my_track)
-        
+        # loop over tracks
+        musics = item['album']['tracks']['items']
+        for music in musics :
+            spotify_ids.append(music['id'])        
 
     iteration += 1
     if len(results['items']) < 20 :
-        browse_all_saved_tracks = True
+        browse_all_saved_albums = True
+
+# Get right form for musics in albums
+for i in range(0, len(spotify_ids), 50) :
+
+    all_tracks = sp2.tracks(spotify_ids[i:i+50])
+
+    for idx, item in enumerate(all_tracks['tracks']) :
+
+        my_track = track.track()
+        my_track.init_from_album(item)
+        my_track.display()
+
+        saved_album_tracks.append(my_track)
