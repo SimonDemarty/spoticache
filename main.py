@@ -102,6 +102,48 @@ for i in range(0, len(spotify_ids), 50) :
         saved_album_tracks.append(my_track)
 
 # Get all tracks from playlists
+saved_playlist_tracks = []
+
+iteration = 0
+browse_all_saved_playlists = False
+while not browse_all_saved_playlists:
+
+    offset = iteration*50
+    results=sp.current_user_playlists(offset=offset)
+
+    for idx, item in enumerate(results['items']):
+
+        spotify_id = item['id']
+        name = item['name']
+
+        iteration_pl = 0
+        browse_all_tracks_in_playlist = False
+        while not browse_all_tracks_in_playlist :
+
+            offset = iteration_pl*100
+            playlist = sp.playlist_tracks(spotify_id, offset=offset)
+
+            for a_track_id, a_track in enumerate(playlist['items']):
+
+                my_track = track.track()
+                my_track.init_from_playlist(a_track)
+                my_track.display()
+
+                saved_playlist_tracks.append(my_track)
+
+            iteration_pl += 1
+            if len(playlist['items']) < 100 :
+                browse_all_tracks_in_playlist = True        
+
+    iteration += 1
+    if len(results['items']) < 50 :
+        browse_all_saved_playlists = True
+
+
+print()
+print(len(saved_tracks))
+print(len(saved_album_tracks))
+print(len(saved_playlist_tracks))
 
 # Organize Library ============================================================
 
