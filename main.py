@@ -147,6 +147,26 @@ print(len(saved_playlist_tracks))
 
 # Organize Library ============================================================
 
+# Add everything to same array and remove doubles
+all_tracks = saved_album_tracks # Start wuth albums tracks
+
+# Remove doubles
+tracks2add = saved_tracks
+tracks2add.extend(saved_playlist_tracks)
+for track2add in tracks2add:
+    
+    already_in = False
+    for track in all_tracks :
+        if track2add.spotify_id == track.spotify_id :
+            already_in = True
+            break
+
+    if not already_in :
+        all_tracks.append(track2add)
+
+print()
+print(len(all_tracks))
+
 # Make sure albums are created
 
 # Store all information in pickle =============================================
