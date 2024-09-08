@@ -8,6 +8,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 import track
+import album
 
 # Load environment variables ==================================================
 load_dotenv()
@@ -39,6 +40,8 @@ sp2 = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
 
 # Get music information from spotify ==========================================
 
+print("Analyzing librairy...")
+
 # Get user
 user = sp.me()
 
@@ -56,7 +59,7 @@ while not browse_all_saved_tracks:
 
         my_track = track.track()
         my_track.init_from_playlist(item)
-        my_track.display()
+        # my_track.display()
 
         saved_tracks.append(my_track)
         
@@ -97,7 +100,7 @@ for i in range(0, len(spotify_ids), 50) :
 
         my_track = track.track()
         my_track.init_from_album(item)
-        my_track.display()
+        # my_track.display()
 
         saved_album_tracks.append(my_track)
 
@@ -127,7 +130,7 @@ while not browse_all_saved_playlists:
 
                 my_track = track.track()
                 my_track.init_from_playlist(a_track)
-                my_track.display()
+                # my_track.display()
 
                 saved_playlist_tracks.append(my_track)
 
@@ -140,12 +143,15 @@ while not browse_all_saved_playlists:
         browse_all_saved_playlists = True
 
 
-print()
-print(len(saved_tracks))
-print(len(saved_album_tracks))
-print(len(saved_playlist_tracks))
+print("Saved liked tracks:        " + str(len(saved_tracks)))
+print("Saved tracks in albums:    " + str(len(saved_album_tracks)))
+print("Saved tracks in playlists: " + str(len(saved_playlist_tracks)))
+
+print("Library analyzed.")
 
 # Organize Library ============================================================
+
+print("Removing doubles...")
 
 # Add everything to same array and remove doubles
 all_tracks = saved_album_tracks # Start wuth albums tracks
@@ -164,11 +170,44 @@ for track2add in tracks2add:
     if not already_in :
         all_tracks.append(track2add)
 
-print()
-print(len(all_tracks))
+print("Saved tracks w/o doubles:  " + str(len(all_tracks)))
+print("Doubles removed.")
 
-# Make sure albums are created
+# Create albums
+print("Creating albums...")
+
+all_albums = []
+for track in all_tracks:
+
+    # Album never encountered
+    album_idx = album.album_idx(all_albums, track.album_id)
+
+    # Album never encountered
+    if album_idx == -1 :
+        my_album = album.album(
+            spotify_id = track.album_id,
+            name = track.album_name,
+            artists = track.album_artists_name,
+            image = track.album_image,
+            release_date = track.album_release_date
+        )
+    # Album already exists
+    else :
+        my_album = all_albums.pop(album_idx)
+
+    # add music to album, and place album in index 0 for performance
+    my_album.add_track(track)
+    all_albums.insert(0, my_album)
+
+print("Albums created.")
 
 # Store all information in pickle =============================================
+print("Storing data in pickles...")
+
+with open('all_alums.pickle', 'wb') as handle:
+    pickle.dump(all_albums, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+with open('all_tracks.pickle', 'wb') as handle :
+    pickle.dump(all_tracks, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # Download musics that are not already downloaded =============================
