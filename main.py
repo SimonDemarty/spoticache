@@ -204,10 +204,12 @@ print("Albums created.")
 # Store all information in pickle =============================================
 print("Storing data in pickles...")
 
-with open('all_alums.pickle', 'wb') as handle:
+with open('all_albums.pickle', 'wb') as handle:
     pickle.dump(all_albums, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 with open('all_tracks.pickle', 'wb') as handle :
     pickle.dump(all_tracks, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+print("Data stored.")
 
 # Download musics that are not already downloaded =============================
