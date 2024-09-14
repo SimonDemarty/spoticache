@@ -2,6 +2,11 @@
 
 spotify musics downloader
 
+# Dependencies
+
+pip install yt-dlp
+requirements.txt
+
 # Set up
 
 For this tool to work, you need to set up an app on the [Spotify Dashboard](https://developer.spotify.com/dashboard) :

@@ -36,3 +36,14 @@ def album_idx(albums, spotify_id) :
         if album.spotify_id == spotify_id :
             return album_idx
     return -1
+
+def album_lists_equals(albums_test, albums_ref):
+
+    updated_ref = []
+
+    for album in albums_test :
+        idx = album_idx(albums_ref, album.spotify_id)
+        if idx == -1 :
+            updated_ref.append(album)
+    
+    return updated_ref.extend(albums_ref)
