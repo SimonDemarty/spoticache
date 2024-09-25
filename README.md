@@ -4,10 +4,11 @@ spotify musics downloader
 
 # Dependencies
 
-pip install yt-dlp
-requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-# Set up
+# Spotify set up
 
 For this tool to work, you need to set up an app on the [Spotify Dashboard](https://developer.spotify.com/dashboard) :
 1. Click on ```Create app```.
@@ -21,3 +22,12 @@ SPOTIFY_CLIENT_SECRET = "YOUR CLIENT SECRET HERE"
 SPOTIFY_REDIRECT_URI = "http://localhost:8888/callback"
 ```
 Both the client id and the client secret can be found in the newly created spotify app.
+
+# Run the tool
+
+```bash
+python main.py /path/to/music/directory
+```
+
+The script will create a folder named `spoticache` in which it will download your musics.
+
