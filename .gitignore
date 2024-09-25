@@ -1,9 +1,11 @@
 .env
 venv/
-spotify_types.py
 
 .cache
 __pycache__
 __pycache__/track.cpython-311.pyc
 
 *.pickle
+test.py
+
+.idea/

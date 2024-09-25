@@ -11,7 +11,7 @@ import requests
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 from pytube import YouTube, Search
-import youtube_dl
+# import youtube_dl
 
 import track
 import album
@@ -209,13 +209,15 @@ for track in all_tracks:
 print("Albums created.")
 
 # Load previous pickes
-# print("loading previous pickes...")
+print("loading previous pickes...")
 
 # with open('all_albums.pickle', 'rb') as handle :
-#     all_albums_previous = pickle.load(handle)
+#     # all_albums_previous = pickle.load(handle)
+#     all_albums = pickle.load(handle)
 
 # with open('all_tracks.pickle', 'rb') as handle :
-#     all_tracks_previous = pickle.load(handle)
+#     # all_tracks_previous = pickle.load(handle)
+#     all_tracks = pickle.load(handle)
 
 print("Previous pickle loaded.")
 
@@ -240,6 +242,8 @@ print("Data stored.")
 # Download musics that are not already downloaded =============================
 print("Downloading...")
 
+failed_dl = []
+
 output_folder = os.path.join(sys.argv[1], "spoticache")
 
 if not os.path.isdir(output_folder) :
@@ -247,7 +251,7 @@ if not os.path.isdir(output_folder) :
 
 for album_nb, album in enumerate(all_albums):
 
-    print("album: " + str(album_nb) + "/" + str(len(all_albums)))
+    print("album: " + str(album_nb+1) + "/" + str(len(all_albums)))
 
     album_path = os.path.join(output_folder, ", ".join(album.artists).replace("/", "|") + "/" + album.name.replace("/", "|"))
     
@@ -258,16 +262,26 @@ for album_nb, album in enumerate(all_albums):
         with open(os.path.join(album_path,'thumbnail.jpg'), 'wb') as handler:
             handler.write(img_data)
 
-    for track in album.tracklist :
+    for track_nb, track in enumerate(album.tracklist) :
+        print("\ttrack: " + str(track_nb+1) + "/" + str(len(album.tracklist)))
+        # print(os.path.join(album_path, (track.name).replace("/", "|")) + "")
 
-        # perform search
-        search_string = track.name + " " + " ".join(track.artists_names)
-        search = Search(search_string)
-        
-        # choix ytaudio
-        # TODO: choose more accurately
-        audio = search.results[0]
-        
+        # TODO: try catch + store if fails
+        try:
+            # perform search
+            search_string = track.name + " " + " ".join(track.artists_names)
+            print(search_string)
+            search = Search(search_string)
+            
+            # choix ytaudio
+            # TODO: choose more accurately
+            audio = search.results[0]
+
+        except Exception as e:
+            print(e)
+            failed_dl.append(track)
+            # continue
+
         # create yt object
         audio_url = audio.watch_url
         audio_ytid = audio_url.split("=")[1]
@@ -275,8 +289,10 @@ for album_nb, album in enumerate(all_albums):
         #  yt-dlp -q -o wit -f ba izGwDsrQ1eQ
         
 
+
         # actually dl
         try:
+            print(os.path.join(album_path, (track.name).replace("/", "|")) + "")
 
             # dl
             subprocess.run([
@@ -315,7 +331,21 @@ for album_nb, album in enumerate(all_albums):
 
             file.save()
 
+            break
+
         except Exception as e:
             print(e)
+            failed_dl.append(track)
+            continue
+    
+    # delete thumbnail
+    subprocess.run([
+        "rm", os.path.join(album_path,'thumbnail.jpg')
+    ])
 
 print("Downloaded.")
+
+# =================================================================================================
+
+with open('failed_track.pickle', 'wb') as handle :
+    pickle.dump(failed_dl, handle, protocol=pickle.HIGHEST_PROTOCOL)
