@@ -2,6 +2,7 @@
 import os
 import sys
 from dotenv import load_dotenv, dotenv_values
+import logging
 import copy
 import pickle
 
@@ -16,6 +17,10 @@ from pytube import YouTube, Search
 import track
 import album
 import music_tag
+
+# Initialisation ==============================================================
+
+logging.basicConfig(level=logging.INFO)
 
 # Load environment variables ==================================================
 load_dotenv()
@@ -249,6 +254,8 @@ output_folder = os.path.join(sys.argv[1], "spoticache")
 if not os.path.isdir(output_folder) :
     os.mkdir(output_folder)
 
+# all_albums.reverse()
+
 for album_nb, album in enumerate(all_albums):
 
     print("album: " + str(album_nb+1) + "/" + str(len(all_albums)))
@@ -258,9 +265,16 @@ for album_nb, album in enumerate(all_albums):
     if not os.path.isdir(album_path) :
         os.makedirs(album_path)
 
-        img_data = requests.get(album.image).content
-        with open(os.path.join(album_path,'thumbnail.jpg'), 'wb') as handler:
-            handler.write(img_data)
+        done=False
+        while not done:
+            try:
+                img_data = requests.get(album.image).content
+                with open(os.path.join(album_path,'thumbnail.jpg'), 'wb') as handler:
+                    handler.write(img_data)
+                done=True
+            except Exception as e:
+                print(e)
+
 
     for track_nb, track in enumerate(album.tracklist) :
         print("\ttrack: " + str(track_nb+1) + "/" + str(len(album.tracklist)))
@@ -330,8 +344,6 @@ for album_nb, album in enumerate(all_albums):
             file['artwork'] = img_data
 
             file.save()
-
-            break
 
         except Exception as e:
             print(e)
